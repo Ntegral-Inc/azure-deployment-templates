@@ -1,0 +1,9 @@
+{
+    "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+    "type": "QuickStart",
+    "itemDisplayName": "CentOS 7 VM with EOL Support",
+    "description": "This template deploys a CentOS 7 VM that has EOL repo included. The deployment template creates an CentOS 7 VM.",
+    "summary": "Deploy a CentOS 7 VM with EOL Support",
+    "githubUsername": "ntegral",
+    "dateUpdated": "2025-05-07"
+  }
