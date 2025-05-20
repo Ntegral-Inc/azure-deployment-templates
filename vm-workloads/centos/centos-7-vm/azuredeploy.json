@@ -2,88 +2,89 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "adminUsername": {
-            "type": "string",
-            "metadata": {
-                "description": "These credentials can be used to remotely access the Virtual Machine."
-             }
-        },
-        "adminPasswordOrKey": {
-            "type": "securestring",
-            "metadata": {
-                "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
-            }
-        },
-        "authenticationType": {
-            "type": "string",
-            "defaultValue": "password",
-            "allowedValues": [
-                "password",
-                "sshPublicKey"
-             ],
-            "metadata": {
-                "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
-            }
-        },
-        "enablePeriodicAssessment": {
-            "type": "string"
-        },
-        "location": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "metadata": {
-                "description": "Location for all resources."
-            }
-        },
-        "nicDeleteOption": {
-            "type": "string"
-        },
-        "networkSecurityGroupName": {
-            "type": "string"
-        },
-        "networkSecurityGroupRules": {
-            "type": "array"
-        },
-        "osDiskType": {
-            "type": "string"
-        },
-        "osDiskDeleteOption": {
-            "type": "string"
-        },
-        "pipDeleteOption": {
-            "type": "string"
-        },  
-        "subnetName": {
-            "type": "string"
-        },
-        "virtualNetworkId": {
-            "type": "string"
-        },
-        "virtualMachineSize": {
-            "type": "string"
+      "adminUsername": {
+        "type": "string",
+        "metadata": {
+          "description": "These credentials can be used to remotely access the Virtual Machine."
         }
+      },
+      "adminPasswordOrKey": {
+        "type": "securestring",
+        "metadata": {
+          "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
+        }
+      },
+      "authenticationType": {
+        "type": "string",
+        "allowedValues": [
+          "password",
+          "sshPublicKey"
+        ],
+        "metadata": {
+          "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+        }
+      },
+      "enablePeriodicAssessment": {
+        "type": "string"
+      },
+      "location": {
+        "type": "string",
+        "metadata": {
+          "description": "Location for all resources."
+        }
+      },
+      "nicDeleteOption": {
+        "type": "string"
+      },
+      "networkSecurityGroupName": {
+        "type": "string"
+      },
+      "networkSecurityGroupRules": {
+        "type": "array"
+      },
+      "osDiskType": {
+        "type": "string"
+      },
+      "osDiskDeleteOption": {
+        "type": "string"
+      },
+      "pipDeleteOption": {
+        "type": "string"
+      },
+      "subnetName": {
+        "type": "string"
+      },
+      "virtualNetworkId": {
+        "type": "string"
+      },
+      "virtualMachineSize": {
+        "type": "string"
+      },
+      "networkInterfaceName1": {
+        "type": "string"
+      },
+      "publicIpAddressName1": {
+        "type": "string"
+      },
+      "virtualMachineName1": {
+        "type": "string"
+      },
+      "virtualMachineComputerName1": {
+        "type": "string"
+      },
+      "virtualMachine1Zone": {
+        "type": "string"
+      }
     },
     "variables": {
-        "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
-        "vnetId": "[parameters('virtualNetworkId')]",
-        "vnetName": "[last(split(variables('vnetId'), '/'))]",
-        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
-        "linuxConfiguration": {
-            "disablePasswordAuthentication": false,
-            "provisionVMAgent": true,
-            "ssh": {
-                "publicKeys": [
-                    {
-                        "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-                        "keyData": "[parameters('adminPasswordOrKey')]"
-                    }
-                ]
-            }
-        },
-        "imagePublisher": "ntegralinc1586961136942",
-        "imageOffer": "ntg_centos_7",
-        "imageSku": "ntg_centos_7_els",
-        "imageVersion": "latest"
+      "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
+      "vnetId": "[parameters('virtualNetworkId')]",
+      "vnetName": "[last(split(variables('vnetId'), '/'))]",
+      "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+      "imagePublisher": "ntegralinc1586961136942",
+      "imageOffer": "ntg_centos_7",
+      "imageSku": "ntg_centos_7_els",
+      "imageVersion": "latest"
     },
     "resources": [
         {

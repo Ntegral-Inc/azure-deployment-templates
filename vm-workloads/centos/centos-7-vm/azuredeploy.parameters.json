@@ -1,7 +1,25 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-     
-    }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": { "value": "" },
+    "adminPasswordOrKey": { "value": "" },
+    "authenticationType": { "value": "" },
+    "enablePeriodicAssessment": { "value": "" },
+    "location": { "value": "" },
+    "nicDeleteOption": { "value": "" },
+    "networkSecurityGroupName": { "value": "" },
+    "networkSecurityGroupRules": { "value": [] },
+    "osDiskType": { "value": "" },
+    "osDiskDeleteOption": { "value": "" },
+    "pipDeleteOption": { "value": "" },
+    "subnetName": { "value": "" },
+    "virtualNetworkId": { "value": "" },
+    "virtualMachineSize": { "value": "" },
+    "networkInterfaceName1": { "value": "" },
+    "publicIpAddressName1": { "value": "" },
+    "virtualMachineName1": { "value": "" },
+    "virtualMachineComputerName1": { "value": "" },
+    "virtualMachine1Zone": { "value": "" }
   }
+}
