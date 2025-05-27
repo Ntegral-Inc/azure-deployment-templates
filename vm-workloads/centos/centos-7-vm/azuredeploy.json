@@ -1,200 +1,208 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "adminUsername": {
-        "type": "string",
-        "metadata": {
-          "description": "These credentials can be used to remotely access the Virtual Machine."
-        }
-      },
-      "adminPasswordOrKey": {
-        "type": "securestring",
-        "metadata": {
-          "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
-        }
-      },
-      "authenticationType": {
-        "type": "string",
-        "allowedValues": [
-          "password",
-          "sshPublicKey"
-        ],
-        "metadata": {
-          "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
-        }
-      },
-      "enablePeriodicAssessment": {
-        "type": "string"
-      },
-      "location": {
-        "type": "string",
-        "metadata": {
-          "description": "Location for all resources."
-        }
-      },
-      "nicDeleteOption": {
-        "type": "string"
-      },
-      "networkSecurityGroupName": {
-        "type": "string"
-      },
-      "networkSecurityGroupRules": {
-        "type": "array"
-      },
-      "osDiskType": {
-        "type": "string"
-      },
-      "osDiskDeleteOption": {
-        "type": "string"
-      },
-      "pipDeleteOption": {
-        "type": "string"
-      },
-      "subnetName": {
-        "type": "string"
-      },
-      "virtualNetworkId": {
-        "type": "string"
-      },
-      "virtualMachineSize": {
-        "type": "string"
-      },
-      "networkInterfaceName1": {
-        "type": "string"
-      },
-      "publicIpAddressName1": {
-        "type": "string"
-      },
-      "virtualMachineName1": {
-        "type": "string"
-      },
-      "virtualMachineComputerName1": {
-        "type": "string"
-      },
-      "virtualMachine1Zone": {
-        "type": "string"
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "These credentials can be used to remotely access the Virtual Machine."
       }
     },
-    "variables": {
-      "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
-      "vnetId": "[parameters('virtualNetworkId')]",
-      "vnetName": "[last(split(variables('vnetId'), '/'))]",
-      "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
-      "imagePublisher": "ntegralinc1586961136942",
-      "imageOffer": "ntg_centos_7",
-      "imageSku": "ntg_centos_7_els",
-      "imageVersion": "latest"
+    "adminPasswordOrKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
+      }
     },
-    "resources": [
-        {
-            "name": "[parameters('networkInterfaceName1')]",
-            "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2022-11-01",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
-                "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName1'))]"
-            ],
+    "authenticationType": {
+      "type": "string",
+      "allowedValues": [
+        "password",
+        "sshPublicKey"
+      ],
+      "metadata": {
+        "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+      }
+    },
+    "enablePeriodicAssessment": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "nicDeleteOption": {
+      "type": "string"
+    },
+    "networkSecurityGroupName": {
+      "type": "string"
+    },
+    "networkSecurityGroupRules": {
+      "type": "array"
+    },
+    "osDiskType": {
+      "type": "string"
+    },
+    "osDiskDeleteOption": {
+      "type": "string"
+    },
+    "pipDeleteOption": {
+      "type": "string"
+    },
+    "subnetName": {
+      "type": "string"
+    },
+    "virtualNetworkId": {
+      "type": "string"
+    },
+    "virtualMachineSize": {
+      "type": "string"
+    },
+    "networkInterfaceName1": {
+      "type": "string"
+    },
+    "publicIpAddressName1": {
+      "type": "string"
+    },
+    "virtualMachineName1": {
+      "type": "string"
+    },
+    "virtualMachineComputerName1": {
+      "type": "string"
+    },
+    "virtualMachine1Zone": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
+    "vnetId": "[parameters('virtualNetworkId')]",
+    "vnetName": "[last(split(variables('vnetId'), '/'))]",
+    "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+    "imagePublisher": "ntegralinc1586961136942",
+    "imageOffer": "ntg_centos_7",
+    "imageSku": "ntg_centos_7_els",
+    "imageVersion": "latest"
+  },
+  "resources": [
+    {
+      "name": "[parameters('networkInterfaceName1')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2022-11-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
+        "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName1'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
             "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "subnet": {
-                                "id": "[variables('subnetRef')]"
-                            },
-                            "privateIPAllocationMethod": "Dynamic",
-                            "publicIpAddress": {
-                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName1'))]",
-                                "properties": {
-                                    "deleteOption": "[parameters('pipDeleteOption')]"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "networkSecurityGroup": {
-                    "id": "[variables('nsgId')]"
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              },
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIpAddress": {
+                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName1'))]",
+                "properties": {
+                  "deleteOption": "[parameters('pipDeleteOption')]"
                 }
+              }
             }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[variables('nsgId')]"
+        }
+      }
+    },
+    {
+      "name": "[parameters('networkSecurityGroupName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-05-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": "[parameters('networkSecurityGroupRules')]"
+      }
+    },
+    {
+      "name": "[parameters('virtualMachineName1')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2024-03-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName1'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachineSize')]"
         },
-        {
-            "name": "[parameters('networkSecurityGroupName')]",
-            "type": "Microsoft.Network/networkSecurityGroups",
-            "apiVersion": "2020-05-01",
-            "location": "[parameters('location')]",
-            "properties": {
-                "securityRules": "[parameters('networkSecurityGroupRules')]"
+        "storageProfile": {
+          "osDisk": {
+            "createOption": "fromImage",
+            "managedDisk": {
+              "storageAccountType": "[parameters('osDiskType')]"
+            },
+            "deleteOption": "[parameters('osDiskDeleteOption')]"
+          },
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[variables('imageSku')]",
+            "version": "[variables('imageVersion')]"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName1'))]",
+              "properties": {
+                "deleteOption": "[parameters('nicDeleteOption')]"
+              }
             }
+          ]
         },
-        {
-            "name": "[parameters('virtualMachineName1')]",
-            "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2024-03-01",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName1'))]"
-            ],
-            "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[parameters('virtualMachineSize')]"
-                },
-                "storageProfile": {
-                    "osDisk": {
-                        "createOption": "fromImage",
-                        "managedDisk": {
-                            "storageAccountType": "[parameters('osDiskType')]"
-                        },
-                        "deleteOption": "[parameters('osDiskDeleteOption')]"
-                    },
-                    "imageReference": {
-                        "publisher": "[variables('imagePublisher')]",
-                        "offer": "[variables('imageOffer')]",
-                        "sku": "[variables('imageSku')]",
-                        "version": "[variables('imageVersion')]"
-                    }
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName1'))]",
-                            "properties": {
-                                "deleteOption": "[parameters('nicDeleteOption')]"
-                            }
-                        }
-                    ]
-                },
-                "securityProfile": {},
-                "additionalCapabilities": {
-                    "ultraSSDEnabled": true,
-                    "hibernationEnabled": false
-                },
-                "osProfile": {
-                    "computerName": "[parameters('virtualMachineComputerName1')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]",
-                    "linuxConfiguration": {
-                        "patchSettings": {
-                            "assessmentMode": "[parameters('enablePeriodicAssessment')]",
-                            "patchMode": "ImageDefault"
-                        }
-                    }
-                },
-                "diagnosticsProfile": {
-                    "bootDiagnostics": {
-                        "enabled": true
-                    }
+        "securityProfile": {},
+        "additionalCapabilities": {
+          "ultraSSDEnabled": true,
+          "hibernationEnabled": false
+        },
+        "osProfile": {
+          "computerName": "[parameters('virtualMachineComputerName1')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "[equals(parameters('authenticationType'), 'sshPublicKey')]",
+            "patchSettings": {
+              "assessmentMode": "[parameters('enablePeriodicAssessment')]",
+              "patchMode": "ImageDefault"
+            },
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                  "keyData": "[parameters('adminPasswordOrKey')]"
                 }
-            },
-            "plan": {
-                "name": "ntg_centos_7_els",
-                "publisher": "ntegralinc1586961136942",
-                "product": "ntg_centos_7"
-            },
-            "zones": [
-                "[parameters('virtualMachine1Zone')]"
-            ]
+              ]
+            }
+          }
         },
-    ]
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true
+          }
+        }
+      },
+      "plan": {
+        "name": "ntg_centos_7_els",
+        "publisher": "ntegralinc1586961136942",
+        "product": "ntg_centos_7"
+      },
+      "zones": [
+        "[parameters('virtualMachine1Zone')]"
+      ]
+    }
+  ]
 }
