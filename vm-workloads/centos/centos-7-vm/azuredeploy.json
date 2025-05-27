@@ -2,85 +2,77 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure region for all resources."
+      }
+    },
     "adminUsername": {
       "type": "string",
       "metadata": {
-        "description": "These credentials can be used to remotely access the Virtual Machine."
+        "description": "Username for the virtual machine."
       }
     },
     "adminPasswordOrKey": {
       "type": "securestring",
       "metadata": {
-        "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
+        "description": "Password or SSH public key for the virtual machine."
       }
     },
     "authenticationType": {
       "type": "string",
-      "allowedValues": [
-        "password",
-        "sshPublicKey"
-      ],
+      "allowedValues": ["password", "sshPublicKey"],
       "metadata": {
-        "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+        "description": "Type of authentication for the virtual machine."
       }
     },
-    "enablePeriodicAssessment": {
-      "type": "string"
-    },
-    "location": {
+    "virtualMachineName": {
       "type": "string",
       "metadata": {
-        "description": "Location for all resources."
+        "description": "Name of the virtual machine."
       }
     },
-    "nicDeleteOption": {
-      "type": "string"
-    },
-    "networkSecurityGroupName": {
-      "type": "string"
-    },
-    "networkSecurityGroupRules": {
-      "type": "array"
-    },
-    "osDiskType": {
-      "type": "string"
-    },
-    "osDiskDeleteOption": {
-      "type": "string"
-    },
-    "pipDeleteOption": {
-      "type": "string"
-    },
-    "subnetName": {
-      "type": "string"
+    "virtualMachineSize": {
+      "type": "string",
+      "metadata": {
+        "description": "Size of the virtual machine (e.g., Standard_B1s)."
+      }
     },
     "virtualNetworkId": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Resource ID of the existing virtual network."
+      }
     },
-    "virtualMachineSize": {
-      "type": "string"
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet within the virtual network."
+      }
     },
-    "networkInterfaceName1": {
-      "type": "string"
+    "networkSecurityGroupId": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource ID of the existing Network Security Group (NSG)."
+      }
     },
-    "publicIpAddressName1": {
-      "type": "string"
+    "publicIpAddressId": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource ID of the existing Public IP address."
+      }
     },
-    "virtualMachineName1": {
-      "type": "string"
-    },
-    "virtualMachineComputerName1": {
-      "type": "string"
-    },
-    "virtualMachine1Zone": {
-      "type": "string"
+    "osDiskType": {
+      "type": "string",
+      "metadata": {
+        "description": "OS disk storage type (e.g., Standard_LRS, Premium_LRS)."
+      }
     }
   },
   "variables": {
-    "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
-    "vnetId": "[parameters('virtualNetworkId')]",
-    "vnetName": "[last(split(variables('vnetId'), '/'))]",
-    "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+    "subnetRef": "[concat(parameters('virtualNetworkId'), '/subnets/', parameters('subnetName'))]",
+    "nicName": "[concat(parameters('virtualMachineName'), '-nic')]",
     "imagePublisher": "ntegralinc1586961136942",
     "imageOffer": "ntg_centos_7",
     "imageSku": "ntg_centos_7_els",
@@ -88,14 +80,10 @@
   },
   "resources": [
     {
-      "name": "[parameters('networkInterfaceName1')]",
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2022-11-01",
+      "name": "[variables('nicName')]",
       "location": "[parameters('location')]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
-        "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName1'))]"
-      ],
       "properties": {
         "ipConfigurations": [
           {
@@ -106,35 +94,23 @@
               },
               "privateIPAllocationMethod": "Dynamic",
               "publicIpAddress": {
-                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName1'))]",
-                "properties": {
-                  "deleteOption": "[parameters('pipDeleteOption')]"
-                }
+                "id": "[parameters('publicIpAddressId')]"
               }
             }
           }
         ],
         "networkSecurityGroup": {
-          "id": "[variables('nsgId')]"
+          "id": "[parameters('networkSecurityGroupId')]"
         }
       }
     },
     {
-      "name": "[parameters('networkSecurityGroupName')]",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2020-05-01",
-      "location": "[parameters('location')]",
-      "properties": {
-        "securityRules": "[parameters('networkSecurityGroupRules')]"
-      }
-    },
-    {
-      "name": "[parameters('virtualMachineName1')]",
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2024-03-01",
+      "name": "[parameters('virtualMachineName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName1'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -145,8 +121,7 @@
             "createOption": "fromImage",
             "managedDisk": {
               "storageAccountType": "[parameters('osDiskType')]"
-            },
-            "deleteOption": "[parameters('osDiskDeleteOption')]"
+            }
           },
           "imageReference": {
             "publisher": "[variables('imagePublisher')]",
@@ -155,30 +130,11 @@
             "version": "[variables('imageVersion')]"
           }
         },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName1'))]",
-              "properties": {
-                "deleteOption": "[parameters('nicDeleteOption')]"
-              }
-            }
-          ]
-        },
-        "securityProfile": {},
-        "additionalCapabilities": {
-          "ultraSSDEnabled": true,
-          "hibernationEnabled": false
-        },
         "osProfile": {
-          "computerName": "[parameters('virtualMachineComputerName1')]",
+          "computerName": "[parameters('virtualMachineName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": "[equals(parameters('authenticationType'), 'sshPublicKey')]",
-            "patchSettings": {
-              "assessmentMode": "[parameters('enablePeriodicAssessment')]",
-              "patchMode": "ImageDefault"
-            },
             "ssh": {
               "publicKeys": [
                 {
@@ -188,6 +144,13 @@
               ]
             }
           }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+            }
+          ]
         },
         "diagnosticsProfile": {
           "bootDiagnostics": {
@@ -199,10 +162,7 @@
         "name": "ntg_centos_7_els",
         "publisher": "ntegralinc1586961136942",
         "product": "ntg_centos_7"
-      },
-      "zones": [
-        "[parameters('virtualMachine1Zone')]"
-      ]
+      }
     }
   ]
 }
