@@ -2,12 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "location": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure region for all resources."
-      }
-    },
     "adminUsername": {
       "type": "string",
       "metadata": {
@@ -24,7 +18,7 @@
       "type": "string",
       "allowedValues": ["password", "sshPublicKey"],
       "metadata": {
-        "description": "Type of authentication for the virtual machine."
+        "description": "Authentication method."
       }
     },
     "virtualMachineName": {
@@ -39,39 +33,42 @@
         "description": "Size of the virtual machine (e.g., Standard_B1s)."
       }
     },
-    "virtualNetworkId": {
+    "virtualNetworkName": {
       "type": "string",
       "metadata": {
-        "description": "Resource ID of the existing virtual network."
+        "description": "Name of the existing virtual network."
       }
     },
     "subnetName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the subnet within the virtual network."
+        "description": "Name of the existing subnet."
       }
     },
-    "networkSecurityGroupId": {
+    "networkSecurityGroupName": {
       "type": "string",
       "metadata": {
-        "description": "Resource ID of the existing Network Security Group (NSG)."
+        "description": "Name of the existing Network Security Group."
       }
     },
-    "publicIpAddressId": {
+    "publicIpAddressName": {
       "type": "string",
       "metadata": {
-        "description": "Resource ID of the existing Public IP address."
+        "description": "Name of the existing Public IP address."
       }
     },
     "osDiskType": {
       "type": "string",
       "metadata": {
-        "description": "OS disk storage type (e.g., Standard_LRS, Premium_LRS)."
+        "description": "Type of the OS disk (e.g., Standard_LRS, Premium_LRS)."
       }
     }
   },
   "variables": {
-    "subnetRef": "[concat(parameters('virtualNetworkId'), '/subnets/', parameters('subnetName'))]",
+    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+    "nsgId": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
+    "publicIpId": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]",
     "nicName": "[concat(parameters('virtualMachineName'), '-nic')]",
     "imagePublisher": "ntegralinc1586961136942",
     "imageOffer": "ntg_centos_7",
@@ -83,7 +80,7 @@
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2022-11-01",
       "name": "[variables('nicName')]",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "ipConfigurations": [
           {
@@ -94,13 +91,13 @@
               },
               "privateIPAllocationMethod": "Dynamic",
               "publicIpAddress": {
-                "id": "[parameters('publicIpAddressId')]"
+                "id": "[variables('publicIpId')]"
               }
             }
           }
         ],
         "networkSecurityGroup": {
-          "id": "[parameters('networkSecurityGroupId')]"
+          "id": "[variables('nsgId')]"
         }
       }
     },
@@ -108,7 +105,7 @@
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2024-03-01",
       "name": "[parameters('virtualMachineName')]",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
       ],
