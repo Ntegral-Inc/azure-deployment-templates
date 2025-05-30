@@ -1,0 +1,126 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/uiDefinition.json#",
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "1.0.0",
+    "parameters": {
+      "basics": [],
+      "steps": [
+        {
+          "name": "vmSettings",
+          "label": "Virtual Machine Settings",
+          "elements": [
+            {
+              "name": "virtualMachineName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Virtual Machine Name",
+              "constraints": {
+                "required": true
+              }
+            },
+            {
+              "name": "virtualMachineSize",
+              "type": "Microsoft.Compute.SizeSelector",
+              "label": "Virtual Machine Size",
+              "constraints": {
+                "required": true
+              }
+            },
+            {
+              "name": "adminUsername",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Admin Username",
+              "constraints": {
+                "required": true
+              }
+            },
+            {
+              "name": "adminPasswordOrKey",
+              "type": "Microsoft.Common.PasswordBox",
+              "label": "Admin Password or SSH Public Key",
+              "constraints": {
+                "required": true
+              }
+            },
+            {
+              "name": "authenticationType",
+              "type": "Microsoft.Common.DropDown",
+              "label": "Authentication Type",
+              "defaultValue": "sshPublicKey",
+              "constraints": {
+                "allowedValues": [
+                  { "label": "Password", "value": "password" },
+                  { "label": "SSH Public Key", "value": "sshPublicKey" }
+                ],
+                "required": true
+              }
+            },
+            {
+              "name": "virtualNetworkName",
+              "type": "Microsoft.Common.ResourceSelector",
+              "resourceType": "Microsoft.Network/virtualNetworks",
+              "label": "Virtual Network",
+              "toolTip": "Select an existing virtual network",
+              "constraints": {
+                "required": true
+              }
+            },
+            {
+              "name": "subnetName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Subnet Name",
+              "toolTip": "Enter the name of the subnet in the selected VNet",
+              "constraints": {
+                "required": true
+              }
+            },
+            {
+              "name": "networkSecurityGroupName",
+              "type": "Microsoft.Common.ResourceSelector",
+              "resourceType": "Microsoft.Network/networkSecurityGroups",
+              "label": "Network Security Group",
+              "toolTip": "Select an existing NSG",
+              "constraints": {
+                "required": true
+              }
+            },
+            {
+              "name": "publicIpAddressName",
+              "type": "Microsoft.Common.ResourceSelector",
+              "resourceType": "Microsoft.Network/publicIpAddresses",
+              "label": "Public IP Address",
+              "toolTip": "Select an existing Public IP",
+              "constraints": {
+                "required": true
+              }
+            },
+            {
+              "name": "osDiskType",
+              "type": "Microsoft.Common.DropDown",
+              "label": "OS Disk Type",
+              "toolTip": "Choose the storage type for the OS disk",
+              "constraints": {
+                "allowedValues": [
+                  { "label": "Standard_LRS", "value": "Standard_LRS" },
+                  { "label": "Premium_LRS", "value": "Premium_LRS" }
+                ],
+                "required": true
+              }
+            }
+          ]
+        }
+      ],
+      "outputs": {
+        "virtualMachineName": "[virtualMachineName]",
+        "virtualMachineSize": "[virtualMachineSize]",
+        "adminUsername": "[adminUsername]",
+        "adminPasswordOrKey": "[adminPasswordOrKey]",
+        "authenticationType": "[authenticationType]",
+        "virtualNetworkName": "[virtualNetworkName]",
+        "subnetName": "[subnetName]",
+        "networkSecurityGroupName": "[networkSecurityGroupName]",
+        "publicIpAddressName": "[publicIpAddressName]",
+        "osDiskType": "[osDiskType]"
+      }
+    }
+  }
+  
