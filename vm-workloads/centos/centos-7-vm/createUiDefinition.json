@@ -1,7 +1,7 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/uiDefinition.json#",
+    "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
     "handler": "Microsoft.Azure.CreateUIDef",
-    "version": "1.0.0",
+    "version": "0.1.2-preview",
     "parameters": {
       "basics": [],
       "steps": [
@@ -12,26 +12,17 @@
             {
               "name": "virtualNetwork",
               "type": "Microsoft.Network.VirtualNetworkCombo",
-              "label": "Virtual Network",
-              "toolTip": "Select an existing virtual network",
+              "label": {
+                "virtualNetwork": "Virtual Network",
+                "subnets": "Subnet"
+              },
+              "toolTip": {
+                "virtualNetwork": "Select an existing virtual network",
+                "subnets": "Select a subnet within the selected virtual network"
+              },
               "constraints": {
                 "required": true
-              },
-              "options": {
-                "hideNew": true
               }
-            },
-            {
-              "name": "subnet",
-              "type": "Microsoft.Network.SubnetCombo",
-              "label": "Subnet",
-              "toolTip": "Select a subnet from the selected virtual network",
-              "constraints": {
-                "required": true
-              },
-              "dependsOn": [
-                "virtualNetwork"
-              ]
             },
             {
               "name": "networkSecurityGroup",
@@ -52,18 +43,12 @@
               "constraints": {
                 "required": true
               }
-            }
-          ]
-        },
-        {
-          "name": "storageSettings",
-          "label": "Storage Settings",
-          "elements": [
+            },
             {
               "name": "osDisk",
               "type": "Microsoft.Common.ResourceSelector",
               "label": "OS Disk",
-              "toolTip": "Select an existing OS Disk",
+              "toolTip": "Select an existing managed OS Disk",
               "resourceType": "Microsoft.Compute/disks",
               "constraints": {
                 "required": true
@@ -74,10 +59,10 @@
       ],
       "outputs": {
         "virtualNetwork": "[steps('networkSettings').virtualNetwork]",
-        "subnet": "[steps('networkSettings').subnet]",
+        "subnet": "[steps('networkSettings').subnets]",
         "networkSecurityGroup": "[steps('networkSettings').networkSecurityGroup]",
         "publicIpAddress": "[steps('networkSettings').publicIpAddress]",
-        "osDisk": "[steps('storageSettings').osDisk]"
+        "osDisk": "[steps('networkSettings').osDisk]"
       }
     }
   }
