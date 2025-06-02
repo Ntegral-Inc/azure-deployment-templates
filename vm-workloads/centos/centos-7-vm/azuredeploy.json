@@ -2,78 +2,22 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "adminUsername": {
-      "type": "string",
-      "metadata": {
-        "description": "Username for the virtual machine."
-      }
-    },
-    "adminPasswordOrKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Password or SSH public key for the virtual machine."
-      }
-    },
+    "virtualMachineName": { "type": "string" },
+    "virtualMachineSize": { "type": "string" },
+    "adminUsername": { "type": "string" },
+    "adminPasswordOrKey": { "type": "securestring" },
     "authenticationType": {
       "type": "string",
-      "allowedValues": ["password", "sshPublicKey"],
-      "metadata": {
-        "description": "Authentication method."
-      }
+      "allowedValues": ["password", "sshPublicKey"]
     },
-    "virtualMachineName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the virtual machine."
-      }
-    },
-    "virtualMachineSize": {
-      "type": "string",
-      "metadata": {
-        "description": "Size of the virtual machine (e.g., Standard_B1s)."
-      }
-    },
-    "virtualNetworkName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the existing virtual network."
-      }
-    },
-    "subnetName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the existing subnet."
-      }
-    },
-    "networkSecurityGroupName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the existing Network Security Group."
-      }
-    },
-    "publicIpAddressName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the existing Public IP address."
-      }
-    },
-    "osDiskType": {
-      "type": "string",
-      "metadata": {
-        "description": "Type of the OS disk (e.g., Standard_LRS, Premium_LRS)."
-      }
-    }
+    "virtualNetwork": { "type": "string" },
+    "subnet": { "type": "string" },
+    "networkSecurityGroup": { "type": "string" },
+    "publicIpAddress": { "type": "string" },
+    "osDisk": { "type": "string" }
   },
   "variables": {
-    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-    "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
-    "nsgId": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
-    "publicIpId": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]",
-    "nicName": "[concat(parameters('virtualMachineName'), '-nic')]",
-    "imagePublisher": "ntegralinc1586961136942",
-    "imageOffer": "ntg_centos_7",
-    "imageSku": "ntg_centos_7_els",
-    "imageVersion": "latest"
+    "nicName": "[concat(parameters('virtualMachineName'), '-nic')]"
   },
   "resources": [
     {
@@ -87,17 +31,17 @@
             "name": "ipconfig1",
             "properties": {
               "subnet": {
-                "id": "[variables('subnetRef')]"
+                "id": "[parameters('subnet')]"
               },
               "privateIPAllocationMethod": "Dynamic",
               "publicIpAddress": {
-                "id": "[variables('publicIpId')]"
+                "id": "[parameters('publicIpAddress')]"
               }
             }
           }
         ],
         "networkSecurityGroup": {
-          "id": "[variables('nsgId')]"
+          "id": "[parameters('networkSecurityGroup')]"
         }
       }
     },
@@ -115,16 +59,16 @@
         },
         "storageProfile": {
           "osDisk": {
-            "createOption": "fromImage",
             "managedDisk": {
-              "storageAccountType": "[parameters('osDiskType')]"
-            }
+              "id": "[parameters('osDisk')]"
+            },
+            "createOption": "Attach"
           },
           "imageReference": {
-            "publisher": "[variables('imagePublisher')]",
-            "offer": "[variables('imageOffer')]",
-            "sku": "[variables('imageSku')]",
-            "version": "[variables('imageVersion')]"
+            "publisher": "ntegralinc1586961136942",
+            "offer": "ntg_centos_7",
+            "sku": "ntg_centos_7_els",
+            "version": "latest"
           }
         },
         "osProfile": {

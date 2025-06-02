@@ -2,15 +2,15 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "virtualMachineName": { "value": "" },
+    "virtualMachineSize": { "value": "" },
     "adminUsername": { "value": "" },
     "adminPasswordOrKey": { "value": "" },
     "authenticationType": { "value": "" },
-    "virtualMachineName": { "value": "" },
-    "virtualMachineSize": { "value": "" },
-    "virtualNetworkName": { "value": "" },
-    "subnetName": { "value": "" },
-    "networkSecurityGroupName": { "value": "" },
-    "publicIpAddressName": { "value": "" },
-    "osDiskType": { "value": "" }
+    "virtualNetwork": { "value": "" },
+    "subnet": { "value": "" },
+    "networkSecurityGroup": { "value": "" },
+    "publicIpAddress": { "value": "" },
+    "osDisk": { "value": "" }
   }
 }
